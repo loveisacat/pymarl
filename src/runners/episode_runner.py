@@ -54,11 +54,15 @@ class EpisodeRunner:
 
         while not terminated:
 
+            avail_new = np.array(self.env.get_avail_actions())
+            avail_new = avail_new[:,0:6]
             pre_transition_data = {
                 "state": [self.env.get_state()],
-                "avail_actions": [self.env.get_avail_actions()],
+                "avail_actions": [[avail_new.tolist()]],
+                #"avail_actions": [self.env.get_avail_actions()],
                 "obs": [self.env.get_obs()]
             }
+
 
             self.batch.update(pre_transition_data, ts=self.t)
 
@@ -78,12 +82,16 @@ class EpisodeRunner:
             self.batch.update(post_transition_data, ts=self.t)
 
             self.t += 1
-
+        
+        avail_last = np.array(self.env.get_avail_actions())
+        avail_last = avail_last[:,0:6]
         last_data = {
             "state": [self.env.get_state()],
-            "avail_actions": [self.env.get_avail_actions()],
+            #"avail_actions": [self.env.get_avail_actions()],
+            "avail_actions": [[avail_last.tolist()]],
             "obs": [self.env.get_obs()]
         }
+
         self.batch.update(last_data, ts=self.t)
 
         # Select actions in the last stored state
