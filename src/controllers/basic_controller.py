@@ -1,6 +1,7 @@
 from modules.agents import REGISTRY as agent_REGISTRY
 from components.action_selectors import REGISTRY as action_REGISTRY
 import torch as th
+from modules.representations.cnn import CNN
 
 
 # This multi-agent controller shares parameters between agents
@@ -9,7 +10,8 @@ class BasicMAC:
         self.n_agents = args.n_agents
         self.args = args
         input_shape = self._get_input_shape(scheme)
-        self._build_agents(input_shape)
+        #self._build_agents(input_shape)
+        self._build_agents(32)
         self.agent_output_type = args.agent_output_type
 
         self.action_selector = action_REGISTRY[args.action_selector](args)
@@ -89,6 +91,10 @@ class BasicMAC:
             inputs.append(th.eye(self.n_agents, device=batch.device).unsqueeze(0).expand(bs, -1, -1))
 
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
+        
+        #add state representation module cnn,gnn,transformer etc.
+        inputs = CNN().to(batch.device).forward(inputs)
+
         return inputs
 
     def _get_input_shape(self, scheme):
