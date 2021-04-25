@@ -81,7 +81,9 @@ def run_sequential(args, logger):
     # Set up schemes and groups here
     env_info = runner.get_env_info()
     args.n_agents = env_info["n_agents"]
-    args.n_actions = env_info["n_actions"]
+    #args.n_actions = env_info["n_actions"]
+    #we only need direction actions: east,west,north,south,op,stop
+    args.n_actions = 6
     args.state_shape = env_info["state_shape"]
 
     # Default/Base scheme
