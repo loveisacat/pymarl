@@ -3,6 +3,7 @@ from components.action_selectors import REGISTRY as action_REGISTRY
 import torch as th
 from modules.representations.cnn import CNN
 from modules.representations.cluster import cluster
+from modules.representations.transformer import Transformer
 
 
 # This multi-agent controller shares parameters between agents
@@ -95,7 +96,8 @@ class BasicMAC:
         
         #add state representation module cnn,gnn,transformer,cluster etc.
         #inputs = CNN().to(batch.device).forward(inputs)
-        inputs = cluster(len(inputs[0])).to(batch.device).forward(inputs)
+        #inputs = cluster(len(inputs[0])).to(batch.device).forward(inputs)
+        inputs = Transformer(len(inputs[0])).to(batch.device).forward(inputs)
 
         return inputs
 
