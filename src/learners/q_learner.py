@@ -27,6 +27,14 @@ class QLearner:
             self.params += list(self.mixer.parameters())
             self.target_mixer = copy.deepcopy(self.mixer)
 
+        #self.optimiser = RMSprop(params=self.params, lr=args.lr, alpha=args.optim_alpha, eps=args.optim_eps)
+        self.rep_paras = mac.rep_parameters()
+        for param in self.rep_paras:
+               param.requires_grad = False
+               self.params.append(param)
+        
+        #self.params.append(list(self.rep_paras))
+        #self.optimiser = RMSprop(filter(lambda p: p.requires_grad, self.params), lr=args.lr, alpha=args.optim_alpha, eps=args.optim_eps)
         self.optimiser = RMSprop(params=self.params, lr=args.lr, alpha=args.optim_alpha, eps=args.optim_eps)
 
         # a little wasteful to deepcopy (e.g. duplicates action selector), but should work for any MAC

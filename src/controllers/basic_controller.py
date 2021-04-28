@@ -13,7 +13,11 @@ class BasicMAC:
         self.args = args
         input_shape = self._get_input_shape(scheme)
         #self._build_agents(input_shape)
-        self._build_agents(32)
+        #self._build_agents(32)
+        self._build_agents(128)
+        rep = cluster(input_shape)
+        self.rep = rep
+
         self.agent_output_type = args.agent_output_type
 
         self.action_selector = action_REGISTRY[args.action_selector](args)
@@ -62,6 +66,8 @@ class BasicMAC:
 
     def parameters(self):
         return self.agent.parameters()
+    def rep_parameters(self):
+        return self.rep.parameters()
 
     def load_state(self, other_mac):
         self.agent.load_state_dict(other_mac.agent.state_dict())
@@ -96,8 +102,8 @@ class BasicMAC:
         
         #add state representation module cnn,gnn,transformer,cluster etc.
         #inputs = CNN().to(batch.device).forward(inputs)
-        #inputs = cluster(len(inputs[0])).to(batch.device).forward(inputs)
-        inputs = Transformer(len(inputs[0])).to(batch.device).forward(inputs)
+        inputs = self.rep.to(batch.device).forward(inputs)
+        #inputs = Transformer(len(inputs[0])).to(batch.device).forward(inputs)
 
         return inputs
 
