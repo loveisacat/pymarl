@@ -14,7 +14,7 @@ class BasicMAC:
         input_shape = self._get_input_shape(scheme)
         #self._build_agents(input_shape)
         #self._build_agents(32)
-        self._build_agents(128)
+        self._build_agents(args.state_representation_dim)
         rep = cluster(input_shape)
         self.rep = rep
 
@@ -100,10 +100,16 @@ class BasicMAC:
 
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
         
+        #padding zeros for alignment the input size
+        zero = th.zeros((len(inputs),self.args.state_representation_dim - len(inputs[0])), device=batch.device)
+        inputs = th.cat((inputs,zero), 1)
+        
         #add state representation module cnn,gnn,transformer,cluster etc.
         #inputs = CNN().to(batch.device).forward(inputs)
-        inputs = self.rep.to(batch.device).forward(inputs)
+        #inputs = self.rep.to(batch.device).forward(inputs)
         #inputs = Transformer(len(inputs[0])).to(batch.device).forward(inputs)
+        
+
 
         return inputs
 
