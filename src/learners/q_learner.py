@@ -27,14 +27,11 @@ class QLearner:
             self.params += list(self.mixer.parameters())
             self.target_mixer = copy.deepcopy(self.mixer)
 
-        #self.optimiser = RMSprop(params=self.params, lr=args.lr, alpha=args.optim_alpha, eps=args.optim_eps)
         self.rep_paras = mac.rep_parameters()
-        for param in self.rep_paras:
-               param.requires_grad = False
-               self.params.append(param)
+        #for param in self.rep_paras:
+         #      param.requires_grad = False
+          #     self.params.append(param)
         
-        #self.params.append(list(self.rep_paras))
-        #self.optimiser = RMSprop(filter(lambda p: p.requires_grad, self.params), lr=args.lr, alpha=args.optim_alpha, eps=args.optim_eps)
         self.optimiser = RMSprop(params=self.params, lr=args.lr, alpha=args.optim_alpha, eps=args.optim_eps)
 
         # a little wasteful to deepcopy (e.g. duplicates action selector), but should work for any MAC
@@ -146,6 +143,6 @@ class QLearner:
         self.mac.load_models(path)
         # Not quite right but I don't want to save target networks
         self.target_mac.load_models(path)
-        if self.mixer is not None:
-            self.mixer.load_state_dict(th.load("{}/mixer.th".format(path), map_location=lambda storage, loc: storage))
-        self.optimiser.load_state_dict(th.load("{}/opt.th".format(path), map_location=lambda storage, loc: storage))
+        #if self.mixer is not None:
+        #    self.mixer.load_state_dict(th.load("{}/mixer.th".format(path), map_location=lambda storage, loc: storage))
+        #self.optimiser.load_state_dict(th.load("{}/opt.th".format(path), map_location=lambda storage, loc: storage))

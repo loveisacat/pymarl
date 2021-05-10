@@ -14,6 +14,7 @@ from runners import REGISTRY as r_REGISTRY
 from controllers import REGISTRY as mac_REGISTRY
 from components.episode_buffer import ReplayBuffer
 from components.transforms import OneHot
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 def run(_run, _config, _log):
@@ -146,7 +147,8 @@ def run_sequential(args, logger):
 
         logger.console_logger.info("Loading model from {}".format(model_path))
         learner.load_models(model_path)
-        runner.t_env = timestep_to_load
+        #runner.t_env = timestep_to_load
+        runner.t_env = 0
 
         if args.evaluate or args.save_replay:
             evaluate_sequential(args, runner)

@@ -4,6 +4,7 @@ import torch as th
 from modules.representations.cnn import CNN
 from modules.representations.cluster import cluster
 from modules.representations.transformer import Transformer
+from modules.representations.drnet import DrNet
 
 
 # This multi-agent controller shares parameters between agents
@@ -14,8 +15,10 @@ class BasicMAC:
         input_shape = self._get_input_shape(scheme)
         #self._build_agents(input_shape)
         #self._build_agents(32)
-        self._build_agents(args.state_representation_dim)
-        rep = cluster(input_shape)
+        self._build_agents(args.state_representation_dim * 2 + 11)
+        
+        #rep = cluster(input_shape, args.state_representation_dim)
+        rep = DrNet(args.n_agents, args.state_representation_dim)
         self.rep = rep
 
         self.agent_output_type = args.agent_output_type
@@ -76,9 +79,11 @@ class BasicMAC:
         self.agent.cuda()
 
     def save_models(self, path):
+        th.save(self.rep.state_dict(), "{}/drnet.th".format(path))
         th.save(self.agent.state_dict(), "{}/agent.th".format(path))
 
     def load_models(self, path):
+        self.rep.load_state_dict(th.load("{}/drnet.th".format(path), map_location=lambda storage, loc: storage))
         self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage))
 
     def _build_agents(self, input_shape):
@@ -101,16 +106,15 @@ class BasicMAC:
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
         
         #padding zeros for alignment the input size
-        zero = th.zeros((len(inputs),self.args.state_representation_dim - len(inputs[0])), device=batch.device)
-        inputs = th.cat((inputs,zero), 1)
+        #zero = th.zeros((len(inputs),self.args.state_representation_dim - len(inputs[0])), device=batch.device)
+        #inputs = th.cat((inputs,zero), 1)
         
         #add state representation module cnn,gnn,transformer,cluster etc.
         #inputs = CNN().to(batch.device).forward(inputs)
         #inputs = self.rep.to(batch.device).forward(inputs)
+        inputs = self.rep.to(batch.device).forward(inputs)
         #inputs = Transformer(len(inputs[0])).to(batch.device).forward(inputs)
         
-
-
         return inputs
 
     def _get_input_shape(self, scheme):
