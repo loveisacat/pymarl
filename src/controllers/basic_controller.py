@@ -5,6 +5,7 @@ from modules.representations.cnn import CNN
 from modules.representations.cluster import cluster
 from modules.representations.transformer import Transformer
 from modules.representations.drnet import DrNet
+from modules.representations.darnet import DarNet
 
 
 # This multi-agent controller shares parameters between agents
@@ -14,11 +15,11 @@ class BasicMAC:
         self.args = args
         input_shape = self._get_input_shape(scheme)
         #self._build_agents(input_shape)
-        #self._build_agents(32)
         self._build_agents(args.state_representation_dim * 2 + 11)
         
         #rep = cluster(input_shape, args.state_representation_dim)
-        rep = DrNet(args.n_agents, args.state_representation_dim)
+        #rep = DrNet(args.n_agents, args.state_representation_dim)
+        rep = DarNet(args.n_agents, args.state_representation_dim)
         self.rep = rep
 
         self.agent_output_type = args.agent_output_type
