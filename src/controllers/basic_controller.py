@@ -15,7 +15,8 @@ class BasicMAC:
         self.args = args
         input_shape = self._get_input_shape(scheme)
         #self._build_agents(input_shape)
-        self._build_agents(args.state_representation_dim * 2 + 11)
+        #self._build_agents(args.state_representation_dim * 2 + 11)
+        self._build_agents(5 * 2 + 11)
         
         #rep = cluster(input_shape, args.state_representation_dim)
         #rep = DrNet(args.n_agents, args.state_representation_dim)

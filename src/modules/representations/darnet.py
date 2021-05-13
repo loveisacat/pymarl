@@ -19,7 +19,7 @@ class DarNet(nn.Module):
         #Init the attention encoder
         self.enemy_attention = Transformer(self.enemy_shape, output_shape)
         self.ally_attention = Transformer(self.ally_shape, output_shape)
-
+         
 
     def forward(self, inputs):
         #The original inputs structure is : move_direction, agent_num * enemy_shape, (agent_num - 1) * ally_shape, unit_shape, n_actions, agent_num
