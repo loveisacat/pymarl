@@ -19,9 +19,10 @@ buffer_cpu_only: True # If true we won't keep all of the replay buffer in vram
 # --- Logging options ---
 use_tensorboard: True # Log results to tensorboard
 save_model: True # Save the models to disk
-save_model_interval: 500000 # Save models after this many timesteps
-#checkpoint_path: "/home/bchen7/codebase/pymarl2/results/models/qmix__2021-05-13_18-49-26" # Load a checkpoint from this path
-checkpoint_path: "" # Load a checkpoint from this path
+save_model_interval: 200000 # Save models after this many timesteps
+#checkpoint_path: ""
+checkpoint_path: "/home/bchen7/codebase/pymarl2/results/models/qmix__2021-09-24_22-47-57" # Load a checkpoint from this path
+#checkpoint_path: "/home/bchen7/codebase/pymarl2/results/models/qmix__2021-09-12_20-50-49" # Load a checkpoint from this path
 evaluate: False # Evaluate model for test_nepisode episodes and quit (no training)
 load_step: 0 # Load model trained on this many timesteps (0 if choose max possible)
 save_replay: False # Saving the replay of the model loaded from checkpoint_path
@@ -42,8 +43,8 @@ agent: "rnn" # Default rnn agent
 rnn_hidden_dim: 64 # Size of hidden state for default rnn agent
 obs_agent_id: True # Include the agent's one_hot id in the observation
 obs_last_action: True # Include the agent's last action (one_hot) in the observation
-#state_representation_dim: 32 # Size of state representation dim
 state_representation_dim: 32 # Size of state representation dim
+NN_state_representation_dim: 5 # Size of state representation dim
 # --- Experiment running params ---
 repeat_id: 1
 label: "default_label"

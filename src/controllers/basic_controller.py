@@ -16,10 +16,11 @@ class BasicMAC:
         input_shape = self._get_input_shape(scheme)
         #self._build_agents(input_shape)
         #self._build_agents(args.state_representation_dim * 2 + 11)
+        
         self._build_agents(5 * 2 + 11)
         
         #rep = cluster(input_shape, args.state_representation_dim)
-        #rep = DrNet(args.n_agents, args.state_representation_dim)
+        #rep = DrNet(args.n_agents, args.NN_state_representation_dim)
         rep = DarNet(args.n_agents, args.state_representation_dim)
         self.rep = rep
 
@@ -81,12 +82,19 @@ class BasicMAC:
         self.agent.cuda()
 
     def save_models(self, path):
+        agent_transdict = {}
+        for key in self.agent.state_dict():
+            if('fc2' not in key):
+                 agent_transdict[key] = self.agent.state_dict()[key]
         th.save(self.rep.state_dict(), "{}/drnet.th".format(path))
         th.save(self.agent.state_dict(), "{}/agent.th".format(path))
+        th.save(agent_transdict, "{}/agent_trans.th".format(path))
 
     def load_models(self, path):
         self.rep.load_state_dict(th.load("{}/drnet.th".format(path), map_location=lambda storage, loc: storage))
         self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage))
+        #self.agent.load_state_dict(th.load("{}/agent_trans.th".format(path), map_location=lambda storage, loc: storage), strict=False)
+        #self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage), strict=False)
 
     def _build_agents(self, input_shape):
         self.agent = agent_REGISTRY[self.args.agent](input_shape, self.args)
@@ -107,6 +115,8 @@ class BasicMAC:
 
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
         
+        inputs = self.rep.to(batch.device).forward(inputs)
+        
         #padding zeros for alignment the input size
         #zero = th.zeros((len(inputs),self.args.state_representation_dim - len(inputs[0])), device=batch.device)
         #inputs = th.cat((inputs,zero), 1)
@@ -114,7 +124,7 @@ class BasicMAC:
         #add state representation module cnn,gnn,transformer,cluster etc.
         #inputs = CNN().to(batch.device).forward(inputs)
         #inputs = self.rep.to(batch.device).forward(inputs)
-        inputs = self.rep.to(batch.device).forward(inputs)
+        #inputs = self.rep.to(batch.device).forward(inputs)
         #inputs = Transformer(len(inputs[0])).to(batch.device).forward(inputs)
         
         return inputs
